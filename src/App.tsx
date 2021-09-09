@@ -5,7 +5,6 @@ import Areas from './Areas';
 import Assets from './Assets';
 import Investments from './Investments';
 import Algorithms from './Algorithms';
-import './App.css';
 
 function App() {
   return (
