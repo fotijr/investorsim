@@ -6,16 +6,22 @@ import { NavLink } from 'react-router-dom';
  */
 function Areas() {
   return (
-    <div className="my-6 flex flex-row justify-between">
-      <h2>
-        <NavLink to="/assets">Assets</NavLink>
-      </h2>
-      <h2>
-        <NavLink to="/investments">Investments</NavLink>
-      </h2>
-      <h2>
-        <NavLink to="/algorithms">Algorithms</NavLink>
-      </h2>
+    <div className="my-6 grid grid-flow-col auto-cols-fr">
+      <div>
+        <h2>
+          <NavLink className="block mr-10 w-3/4" to="/assets">Assets</NavLink>
+        </h2>
+      </div>
+      <div>
+        <h2>
+          <NavLink className="block mr-10 w-3/4" to="/investments">Investments</NavLink>
+        </h2>
+      </div>
+      <div>
+        <h2>
+          <NavLink className="block mr-10 w-3/4" to="/algorithms">Algorithms</NavLink>
+        </h2>
+      </div>
     </div>
   );
 }

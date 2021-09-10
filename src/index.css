@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 a.active {
-  @apply font-bold;
+  @apply font-bold border-b-2;
 }
 
 span.label{

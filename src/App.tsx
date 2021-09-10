@@ -16,11 +16,11 @@ function App() {
 
         <Switch>
           <Route exact path="/">
-            <div>Stuff goes here</div>
+            <div>Overview/about</div>
           </Route>
-          <Route path="/assets"  component={Assets} />
-          <Route path="/investments"  component={Investments} />
-          <Route path="/algorithms"  component={Algorithms} />
+          <Route path="/assets" component={Assets} />
+          <Route path="/investments" component={Investments} />
+          <Route path="/algorithms" component={Algorithms} />
         </Switch>
       </div>
     </Router>
