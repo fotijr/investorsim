@@ -2,3 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+a.active {
+  @apply font-bold;
+}
+
+span.label{
+  @apply text-gray-500 font-thin;
+}

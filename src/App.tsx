@@ -10,23 +10,19 @@ function App() {
   return (
     <Router>
       <Header />
-      <Stats />
-      <Areas />
+      <div className="mx-auto max-w-screen-lg">
+        <Stats />
+        <Areas />
 
-      <Switch>
-        <Route exact path="/">
-          <div>Stuff goes here</div>
-        </Route>
-        <Route path="/assets">
-          <Assets />
-        </Route>
-        <Route path="/investments">
-          <Investments />
-        </Route>
-        <Route path="/algorithms">
-          <Algorithms />
-        </Route>
-      </Switch>
+        <Switch>
+          <Route exact path="/">
+            <div>Stuff goes here</div>
+          </Route>
+          <Route path="/assets"  component={Assets} />
+          <Route path="/investments"  component={Investments} />
+          <Route path="/algorithms"  component={Algorithms} />
+        </Switch>
+      </div>
     </Router>
   );
 }
