@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 /**
  * Basic info and links for each section of the game.
@@ -6,16 +6,22 @@ import { Link } from 'react-router-dom';
  */
 function Areas() {
   return (
-    <div>
-      <h2>
-        <Link to="/assets">Assets</Link>
-      </h2>
-      <h2>
-        <Link to="/investments">Investments</Link>
-      </h2>
-      <h2>
-        <Link to="/algorithms">Algorithms</Link>
-      </h2>
+    <div className="my-6 grid grid-flow-col auto-cols-fr">
+      <div>
+        <h2>
+          <NavLink className="block mr-10 w-3/4" to="/assets">Assets</NavLink>
+        </h2>
+      </div>
+      <div>
+        <h2>
+          <NavLink className="block mr-10 w-3/4" to="/investments">Investments</NavLink>
+        </h2>
+      </div>
+      <div>
+        <h2>
+          <NavLink className="block mr-10 w-3/4" to="/algorithms">Algorithms</NavLink>
+        </h2>
+      </div>
     </div>
   );
 }
