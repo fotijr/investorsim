@@ -6,6 +6,18 @@ a.active {
   @apply font-bold border-b-2;
 }
 
-span.label{
+span.label {
   @apply text-gray-500 font-thin;
+}
+
+.bg-wall-st {
+  /* background-image: url(wall-st.jpg); */
+  @apply bg-center bg-cover bg-no-repeat;
+}
+
+button {
+  @apply border px-2 px-4;
+}
+button:hover {
+  @apply bg-gray-100;
 }
