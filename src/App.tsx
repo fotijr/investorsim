@@ -6,7 +6,7 @@ function App() {
   return (
     <Router>
       <Header />
-      <div className="mx-auto max-w-screen-lg">
+      <div className="mx-auto max-w-screen-lg px-6 mb-10">
         <Simulation />
       </div>
     </Router>

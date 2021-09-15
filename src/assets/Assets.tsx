@@ -1,9 +1,11 @@
 import React from 'react';
-import { BuyAssetFunc, formatNumber } from '../models';
+import AssetCard from './Asset';
+import { BuyAssetFunc } from '../models';
 import { Asset } from './models';
 
 type AssetsProps = {
   assets: Asset[];
+  cash: number;
   buyAsset: BuyAssetFunc;
 };
 
@@ -18,16 +20,9 @@ type AssetsState = {
 class Assets extends React.Component<AssetsProps, AssetsState> {
   render() {
     return (
-      <div>
+      <div className="flex">
         {this.props.assets.map((a) => (
-          <div className="mb-3" key={a.name}>
-            <h4 className="text-lg">{a.name}</h4>
-            <span className="label">Price</span>
-            <div className="text-bold">${formatNumber(a.price, 2)}</div>
-            <div>Shares {a.shares}</div>
-            <button onClick={() => this.props.buyAsset(a, 1)}>Buy</button>
-            <button onClick={() => this.props.buyAsset(a, -1)}>Sell</button>
-          </div>
+          <AssetCard key={a.name} asset={a} cash={this.props.cash} buyAsset={this.props.buyAsset} />
         ))}
       </div>
     );
