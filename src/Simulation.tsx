@@ -1,27 +1,69 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  withRouter,
+  RouteComponentProps,
+} from 'react-router-dom';
 import Stats from './Stats';
 import Areas from './Areas';
 import Assets from './assets/Assets';
 import Investments from './Investments';
 import Algorithms from './Algorithms';
+import Profile from './Profile';
 import { Asset } from './assets/models';
+import { UserProfile } from './models';
 
 type SimState = {
+  day: number;
   cash: number;
+  initialNetWorth: number;
   netWorth: number;
+  user: UserProfile;
   assets: Asset[];
 };
 
-class Simulation extends React.Component<{}, SimState> {
+class Simulation extends React.Component<RouteComponentProps, SimState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      cash: 100,
-      netWorth: 100,
+      day: 1,
+      cash: 1000,
+      initialNetWorth: 1000,
+      netWorth: 1000,
+      user: {
+        name: 'You',
+        img: 0,
+      },
       assets: [
-        { name: 'Safe', price: 50, growthRange: [-0.004, 0.006], shares: 0 },
-        { name: 'Risky', price: 125, growthRange: [-0.3, 0.4], shares: 0 },
+        {
+          name: 'Safe',
+          sharePrice: 50,
+          growthRange: [-0.2, 0.25],
+          shares: 0,
+          buyInCost: 0,
+          totalValue: 0,
+          activelyTrading: false,
+        },
+        {
+          name: 'Risky',
+          sharePrice: 125,
+          growthRange: [-1, 1.0103],
+          shares: 0,
+          buyInCost: 0,
+          totalValue: 0,
+          activelyTrading: false,
+        },
+        {
+          name: 'YOLO',
+          sharePrice: 88,
+          growthRange: [-3, 3.0003],
+          shares: 0,
+          buyInCost: 0,
+          totalValue: 0,
+          activelyTrading: false,
+        },
       ],
     };
   }
@@ -33,72 +75,107 @@ class Simulation extends React.Component<{}, SimState> {
   render() {
     return (
       <div>
-        <Stats cash={this.state.cash} netWorth={this.state.netWorth} />
+        <Stats
+          cash={this.state.cash}
+          day={this.state.day}
+          initialNetWorth={this.state.initialNetWorth}
+          netWorth={this.state.netWorth}
+          user={this.state.user}
+        />
         <Areas />
         <Switch>
-          <Route exact path="/">
-            <div>Overview/about</div>
-          </Route>
+          <Redirect exact from="/" to="/assets" />
           <Route path="/assets">
             <Assets
               assets={this.state.assets}
-              buyAsset={this.buySellAsset.bind(this)}
+              cash={this.state.cash}
+              buyAsset={this.buySellAsset}
             />
           </Route>
           <Route path="/investments" component={Investments} />
           <Route path="/algorithms" component={Algorithms} />
+          <Route path="/profile">
+            <Profile
+              user={this.state.user}
+              updated={this.updateUserProfile.bind(this)}
+            />
+          </Route>
         </Switch>
       </div>
     );
   }
 
-  private buySellAsset(asset: Asset, qty: number = 1) {
-    console.log('Buying asset 💰', asset);
-    asset.shares = (asset.shares + qty);
+  private updateUserProfile(user: UserProfile) {
+    this.setState((state, props) => {
+      return { user };
+    });
+  }
+
+  private buySellAsset = (asset: Asset, qty: number = 1) => {
+    if (qty === 0) {
+      return;
+    }
+
+    asset.shares = asset.shares + qty;
+    asset.activelyTrading = true;
+
     this.setState((state, props) => {
       const assets = state.assets.map((a) => {
         if (a.name === asset.name) {
           // replace existing asset with updated share count
+          asset.buyInCost += qty * asset.sharePrice;
           return asset;
         }
         return a;
       });
       return {
         assets,
-        cash: state.cash - (asset.price * qty),
+        cash: state.cash - asset.sharePrice * qty,
       };
     });
-  }
+  };
 
   private advanceDay() {
     this.setState((state, props) => {
       let netWorth = 0;
+      let day = state.day;
+      let isTradingDay = false;
       const assets = state.assets.map((a) => {
-        if (!a.shares) {
-          // no shares, don't grow stock
+        if (!a.activelyTrading) {
+          // stock isn't yet trading, don't adjust price
           return a;
         }
-       // console.log('starting price', a.price);
-        const rate = this.getGrowthRate(a.growthRange[0], a.growthRange[1]);
-        console.log('rate', rate);
-        a.price *= rate;
-        netWorth += (a.price * a.shares);
+        // console.log('starting price', a.price);
+        isTradingDay = true;
+        const rate = this.getRandomNumber(a.growthRange[0], a.growthRange[1]);
+        const multiplier = rate / 100 + 1;
+        // console.log(a.growthRange[0], a.growthRange[1], rate, multiplier);
+        // console.log('rate', rate);
+        a.sharePrice *= multiplier;
+        netWorth += a.sharePrice * a.shares;
         // console.log('new price', a.price);
         return a;
       });
       // console.log('pre nw', netWorth);
+
+      if (isTradingDay) {
+        day++;
+      }
+
       netWorth += state.cash;
+
       // console.log('post nw', netWorth);
       return {
+        day,
         assets,
-        netWorth
+        netWorth,
       };
     });
   }
 
-  private getGrowthRate(min: number, max: number) {
-    return 1 + (Math.random() * (max - min) + min);
+  private getRandomNumber(min: number, max: number) {
+    return Math.random() * (max - min) + min;
   }
 }
 
-export default Simulation;
+export default withRouter(Simulation);
