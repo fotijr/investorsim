@@ -20,7 +20,7 @@ type AssetsState = {
 class Assets extends React.Component<AssetsProps, AssetsState> {
   render() {
     return (
-      <div className="flex">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
         {this.props.assets.map((a) => (
           <AssetCard key={a.name} asset={a} cash={this.props.cash} buyAsset={this.props.buyAsset} />
         ))}
