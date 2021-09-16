@@ -9,7 +9,7 @@ import {
 import Stats from './Stats';
 import Areas from './Areas';
 import Assets from './assets/Assets';
-import Investments from './Investments';
+import Loans from './Loans';
 import Algorithms from './Algorithms';
 import Profile from './Profile';
 import { Asset } from './assets/models';
@@ -27,6 +27,7 @@ type SimState = {
 class Simulation extends React.Component<RouteComponentProps, SimState> {
   constructor(props: any) {
     super(props);
+    const userImgId = Math.floor(this.getRandomNumber(0, 18));
     this.state = {
       day: 1,
       cash: 1000,
@@ -34,9 +35,23 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
       netWorth: 1000,
       user: {
         name: 'You',
-        img: 0,
+        img: userImgId,
       },
       assets: [
+        {
+          name: 'Dividend',
+          sharePrice: 71,
+          growthRange: [-0.05, 0.064],
+          shares: 0,
+          buyInCost: 0,
+          totalValue: 0,
+          activelyTrading: false,
+          dividend: {
+            amount: 2,
+            lastDistributed: 0,
+            frequency: 100,
+          },
+        },
         {
           name: 'Safe',
           sharePrice: 50,
@@ -92,7 +107,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
               buyAsset={this.buySellAsset}
             />
           </Route>
-          <Route path="/investments" component={Investments} />
+          <Route path="/credit" component={Loans} />
           <Route path="/algorithms" component={Algorithms} />
           <Route path="/profile">
             <Profile
@@ -116,14 +131,18 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
       return;
     }
 
-    asset.shares = asset.shares + qty;
-    asset.activelyTrading = true;
-
     this.setState((state, props) => {
       const assets = state.assets.map((a) => {
         if (a.name === asset.name) {
           // replace existing asset with updated share count
           asset.buyInCost += qty * asset.sharePrice;
+          asset.totalValue = asset.buyInCost;
+          asset.shares = asset.shares + qty;
+          asset.activelyTrading = true;
+          if (a.shares === 0 && qty > 0 && asset.dividend) {
+            // first time buying shares of a stock with dividend
+            asset.dividend.lastDistributed = state.day;
+          }
           return asset;
         }
         return a;
@@ -137,6 +156,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
 
   private advanceDay() {
     this.setState((state, props) => {
+      let cash = state.cash;
       let netWorth = 0;
       let day = state.day;
       let isTradingDay = false;
@@ -152,21 +172,30 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
         // console.log(a.growthRange[0], a.growthRange[1], rate, multiplier);
         // console.log('rate', rate);
         a.sharePrice *= multiplier;
-        netWorth += a.sharePrice * a.shares;
-        // console.log('new price', a.price);
+        const holdingsValue = a.sharePrice * a.shares;
+        a.totalValue = holdingsValue;
+        netWorth += holdingsValue;
+
+        if (a.dividend) {
+          if (day >= a.dividend.lastDistributed + a.dividend.frequency) {
+            // it's dividend day!
+            cash += a.dividend.amount * a.shares;
+            a.dividend.lastDistributed = day;
+          }
+        }
+
         return a;
       });
-      // console.log('pre nw', netWorth);
 
       if (isTradingDay) {
         day++;
       }
 
-      netWorth += state.cash;
+      netWorth += cash;
 
-      // console.log('post nw', netWorth);
       return {
         day,
+        cash,
         assets,
         netWorth,
       };

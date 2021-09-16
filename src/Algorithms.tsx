@@ -5,7 +5,7 @@
 function Algorithms() {
   return (
     <div>
-      <h3>Algorithms</h3>
+      <p>Algorithms are still being developed by the economists.</p>
     </div>
   );
 }

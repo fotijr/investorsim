@@ -18,4 +18,15 @@ export interface Asset {
 
   /** Flag set to `true` if asset is actively trading. Trading starts once the first stock has been purchased. */
   activelyTrading: boolean;
+
+  dividend?: {
+    /** Amount (in dollars) of dividend. */
+    amount: number;
+
+    /** Amount of days between dividend distribution. */
+    frequency: number;
+
+    /** Day dividend was distributed. */
+    lastDistributed: number;
+  };
 }

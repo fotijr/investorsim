@@ -9,17 +9,17 @@ function Areas() {
     <div className="my-6 grid grid-flow-col auto-cols-fr">
       <div>
         <h2>
-          <NavLink className="block mr-10 w-3/4" to="/assets">Assets</NavLink>
+          <NavLink className="block mr-10 w-3/4 pt-2" to="/assets">Assets</NavLink>
         </h2>
       </div>
       <div>
         <h2>
-          <NavLink className="block mr-10 w-3/4" to="/investments">Investments</NavLink>
+          <NavLink className="block mr-10 w-3/4 pt-2" to="/credit">Credit</NavLink>
         </h2>
       </div>
       <div>
         <h2>
-          <NavLink className="block mr-10 w-3/4" to="/algorithms">Algorithms</NavLink>
+          <NavLink className="block mr-10 w-3/4 pt-2" to="/algorithms">Algorithms</NavLink>
         </h2>
       </div>
     </div>

@@ -34,13 +34,20 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
   render() {
     return (
       <div
-        className="m-4 border py-4 px-6 flex-1 rounded-md"
+        className={`m-4 border py-4 px-6 rounded-md${
+          this.props.asset.shares ? ' shadow border-l-4' : ''
+        }`}
         key={this.props.asset.name}
       >
-        <h4 className="text-lg font-thin uppercase tracking-wider text-gray-800 mb-2">{this.props.asset.name}</h4>
+        <h4 className="text-xl font-thin uppercase tracking-widest text-gray-800 mb-3">
+          {this.props.asset.name}
+          <span className={`float-right${ this.props.asset.shares > 0 ? '' : ' hidden' }`}>
+            {(((this.props.asset.totalValue / this.props.asset.buyInCost) - 1) * 100).toFixed(2) }%
+          </span>
+        </h4>
 
-        <div className="flex md:justify-items-center">
-          <div className="text-right">
+        <div className="grid grid-cols-2">
+          <div>
             <div className="text-bold text-4xl">
               $
               {formatNumber(this.props.asset.sharePrice, {
@@ -51,9 +58,7 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
           </div>
 
           <div
-            className={`text-right flex-1${
-              this.props.asset.shares > 0 ? '' : ' hidden'
-            }`}
+            className={`flex-1${this.props.asset.shares > 0 ? '' : ' hidden'}`}
           >
             <div className="text-bold text-4xl">
               $
@@ -70,6 +75,7 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
         </div>
         <div className="mt-4">
           <button
+            className="py-2 px-5"
             disabled={this.state.shares > this.props.asset.shares}
             onClick={() =>
               this.props.buyAsset(this.props.asset, -1 * this.state.shares)
@@ -78,13 +84,14 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
             Sell
           </button>
           <input
-            className="w-12 text-right px-2 mx-1 border"
+            className="w-12 text-right px-2 py-2 mx-1 border"
             type="number"
             value={this.state.shares}
             onChange={this.handleShareAmountChange}
             min="1"
           />
           <button
+            className="py-2 px-5"
             disabled={
               this.state.shares * this.props.asset.sharePrice > this.props.cash
             }
