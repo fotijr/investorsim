@@ -131,14 +131,14 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
       return;
     }
 
-    asset.shares = asset.shares + qty;
-    asset.activelyTrading = true;
-
     this.setState((state, props) => {
       const assets = state.assets.map((a) => {
         if (a.name === asset.name) {
           // replace existing asset with updated share count
           asset.buyInCost += qty * asset.sharePrice;
+          asset.totalValue = asset.buyInCost;
+          asset.shares = asset.shares + qty;
+          asset.activelyTrading = true;
           if (a.shares === 0 && qty > 0 && asset.dividend) {
             // first time buying shares of a stock with dividend
             asset.dividend.lastDistributed = state.day;
@@ -172,7 +172,9 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
         // console.log(a.growthRange[0], a.growthRange[1], rate, multiplier);
         // console.log('rate', rate);
         a.sharePrice *= multiplier;
-        netWorth += a.sharePrice * a.shares;
+        const holdingsValue = a.sharePrice * a.shares;
+        a.totalValue = holdingsValue;
+        netWorth += holdingsValue;
 
         if (a.dividend) {
           if (day >= a.dividend.lastDistributed + a.dividend.frequency) {
@@ -182,10 +184,8 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
           }
         }
 
-        // console.log('new price', a.price);
         return a;
       });
-      // console.log('pre nw', netWorth);
 
       if (isTradingDay) {
         day++;
@@ -193,7 +193,6 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
 
       netWorth += cash;
 
-      // console.log('post nw', netWorth);
       return {
         day,
         cash,

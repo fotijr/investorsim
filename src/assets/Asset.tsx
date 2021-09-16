@@ -34,15 +34,20 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
   render() {
     return (
       <div
-        className={`m-4 border py-4 px-6 rounded-md${this.props.asset.shares ? ' shadow border-l-4': ''}`}
+        className={`m-4 border py-4 px-6 rounded-md${
+          this.props.asset.shares ? ' shadow border-l-4' : ''
+        }`}
         key={this.props.asset.name}
       >
         <h4 className="text-xl font-thin uppercase tracking-widest text-gray-800 mb-3">
           {this.props.asset.name}
+          <span className={`float-right${ this.props.asset.shares > 0 ? '' : ' hidden' }`}>
+            {(((this.props.asset.totalValue / this.props.asset.buyInCost) - 1) * 100).toFixed(2) }%
+          </span>
         </h4>
 
         <div className="grid grid-cols-2">
-          <div className="">
+          <div>
             <div className="text-bold text-4xl">
               $
               {formatNumber(this.props.asset.sharePrice, {
@@ -53,9 +58,7 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
           </div>
 
           <div
-            className={`flex-1${
-              this.props.asset.shares > 0 ? '' : ' hidden'
-            }`}
+            className={`flex-1${this.props.asset.shares > 0 ? '' : ' hidden'}`}
           >
             <div className="text-bold text-4xl">
               $
