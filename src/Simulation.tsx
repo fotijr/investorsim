@@ -9,7 +9,7 @@ import {
 import Stats from './Stats';
 import Areas from './Areas';
 import Assets from './assets/Assets';
-import Investments from './Investments';
+import Loans from './Loans';
 import Algorithms from './Algorithms';
 import Profile from './Profile';
 import { Asset } from './assets/models';
@@ -107,7 +107,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
               buyAsset={this.buySellAsset}
             />
           </Route>
-          <Route path="/investments" component={Investments} />
+          <Route path="/credit" component={Loans} />
           <Route path="/algorithms" component={Algorithms} />
           <Route path="/profile">
             <Profile

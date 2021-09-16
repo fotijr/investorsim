@@ -14,7 +14,7 @@ function Areas() {
       </div>
       <div>
         <h2>
-          <NavLink className="block mr-10 w-3/4 pt-2" to="/investments">Investments</NavLink>
+          <NavLink className="block mr-10 w-3/4 pt-2" to="/credit">Credit</NavLink>
         </h2>
       </div>
       <div>
