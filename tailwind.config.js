@@ -1,12 +1,15 @@
 module.exports = {
   mode: 'jit',
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  purge: {
+    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    safelist: ['float-right']
+  },
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       opacity: {
         '98': '0.98',
-       }
+      }
     },
   },
   variants: {
