@@ -1,7 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Chart from 'chart.js';
-import { Line } from 'test-react-chartjs-2';
+import {
+  Chart,
+  ChartConfiguration,
+  ChartType,
+  Filler,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  TimeSeriesScale,
+  Tooltip,
+} from 'chart.js';
 import { formatNumber, UserProfile } from './models';
 
 type StatsProps = {
@@ -13,8 +23,9 @@ type StatsProps = {
 };
 
 type StatsState = {
-  chartData: Chart.ChartData;
-  chartOptions: Chart.ChartOptions;
+  // chartConfig: ChartConfiguration<ChartType, any[], number>;
+  // chartData: ChartJs.ChartData;
+  // chartOptions: ChartJs.ChartOptions;
 };
 
 /**
@@ -22,27 +33,46 @@ type StatsState = {
  * @returns
  */
 class Stats extends React.Component<StatsProps, StatsState> {
-  lineChart: any;
+  chart!: Chart;
+  chartCanvas: React.RefObject<HTMLCanvasElement>;
+  chartConfig: ChartConfiguration<ChartType, any[], number>;
 
   constructor(props: StatsProps) {
     super(props);
-    this.lineChart = React.createRef();
-    this.state = {
-      chartData: {
-        labels: [1],
+
+    /** Chart.js setup and defaults */
+    Chart.register(
+      LineElement,
+      PointElement,
+      LineController,
+      LinearScale,
+      TimeSeriesScale,
+      Filler,
+      Tooltip
+    );
+
+    this.chartCanvas = React.createRef();
+    this.chartConfig = {
+      type: 'line',
+      data: {
         datasets: [
           {
             label: 'Net profit',
-            data: [0],
+            data: [{ x: 1, y: 0 }],
             borderWidth: 0,
             pointBackgroundColor: 'transparent',
             pointBorderColor: 'transparent',
-            fill: { above: 'green', below: 'red', target: { value: 0 } },
-            tension: 0.9,
+            fill: {
+              above: 'rgba(52, 211, 153, 0.5)',
+              below: 'rgba(220, 38, 38, 0.5)',
+              target: { value: 0 },
+            },
+            tension: 0.4,
           },
         ],
       },
-      chartOptions: {
+      options: {
+        animation: false,
         interaction: {
           intersect: false,
           mode: 'index',
@@ -51,8 +81,16 @@ class Stats extends React.Component<StatsProps, StatsState> {
         responsive: true,
         scales: {
           x: {
+            beginAtZero: false,
+            min: 0,
+            max: 1,
+            position: {
+              y: 0,
+            },
+            type: 'linear',
             grid: {
-              drawBorder: false,
+              borderColor: 'rgba(52, 211, 153, 1)',
+              drawBorder: true,
               display: false,
             },
             ticks: {
@@ -60,6 +98,7 @@ class Stats extends React.Component<StatsProps, StatsState> {
             },
           },
           y: {
+            beginAtZero: false,
             grid: {
               drawBorder: false,
               display: false,
@@ -77,6 +116,17 @@ class Stats extends React.Component<StatsProps, StatsState> {
             mode: 'nearest',
             callbacks: {
               title: (ctx) => `Day ${ctx[0].parsed.x}`,
+              label: (ctx) => `$${ctx.parsed.y}`,
+              labelColor: (ctx) => {
+                const color =
+                  ctx.parsed.y < 0
+                    ? 'rgba(220, 38, 38, 0.5)'
+                    : 'rgba(52, 211, 153, 0.5)';
+                return {
+                  borderColor: color,
+                  backgroundColor: color,
+                };
+              },
             },
           },
         },
@@ -84,25 +134,25 @@ class Stats extends React.Component<StatsProps, StatsState> {
     };
   }
 
+  componentDidMount() {
+    this.chart = new Chart(this.chartCanvas.current, this.chartConfig);
+  }
+
   componentWillReceiveProps(nextProps: StatsProps) {
-    console.log('chart ref', this.lineChart);
-    if ((this.state.chartData.labels?.length as number) < nextProps.day) {
-      this.state.chartData.labels?.push(nextProps.day);
-      this.state.chartData.datasets[0].data.push(
-        Math.round(nextProps.netWorth - nextProps.initialNetWorth)
-      );
-      this.lineChart.current.update();
+    if ((this.chart.data.datasets[0].data.length as number) < nextProps.day) {
+      this.chart.data.datasets[0].data.push({
+        x: nextProps.day,
+        y: Number((nextProps.netWorth - nextProps.initialNetWorth).toFixed(2)),
+      });
+      this.chart.config.options!.scales!.x!.max = nextProps.day;
+      this.chart.update();
     }
-    // You don't have to do this check first, but it can help prevent an unneeded render
-    // if (nextProps.startTime !== this.state.startTime) {
-    //   this.setState({ startTime: nextProps.startTime });
-    // }
   }
 
   render() {
     return (
-      <div className="flex items-center mx-10 mt-4 mb-10">
-        <div className="group">
+      <div className="flex flex-col md:flex-row items-center mx-4 mt-4 md:mt-8 mb-10">
+        <div className="group mr-4 md:mx-14 lg:md-20">
           <div className="rounded-full w-40 h-40 overflow-hidden">
             <img
               className="bg-gray-500 grayscale w-40 h-40"
@@ -125,24 +175,26 @@ class Stats extends React.Component<StatsProps, StatsState> {
             </div>
           </div>
         </div>
-        <div className="mx-12">
-          <span className="label">Cash</span>
-          <h3 className="text-5xl">${formatNumber(this.props.cash)}</h3>
-        </div>
-        <div className="mx-12">
-          <span className="label">Net worth</span>
-          <h3 className="text-5xl">${formatNumber(this.props.netWorth)}</h3>
-        </div>
-        <div className={`mx-12${this.props.day > 1 ? '' : ' hidden'}`}>
-          <div style={{ width: '250px', height: '125px' }}>
-            <Line
-              ref={this.lineChart}
-              type="line"
-              width={250}
-              height={125}
-              data={this.state.chartData}
-              options={this.state.chartOptions}
-            />
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 mt-8 md:mt-0 w-full">
+          <div className="mb-4 sm:mb-0">
+            <span className="label">Cash</span>
+            <h3 className="text-5xl">${formatNumber(this.props.cash)}</h3>
+            <span className="text-xs text-gray-800">
+              ${Number(this.props.cash.toFixed(2)).toLocaleString()}
+            </span>
+          </div>
+          <div className="mb-4 sm:mb-0">
+            <span className="label">Net worth</span>
+            <h3 className="text-5xl">${formatNumber(this.props.netWorth)}</h3>
+            <span className="text-xs text-gray-800">
+              ${Number(this.props.netWorth.toFixed(2)).toLocaleString()}
+            </span>
+          </div>
+          <div className={this.props.day > 1 ? 'relative' : ' invisible'}>
+            <h4 className="absolute top-0 left-0 pointer-events-none tracking-wider text-gray-600 font-thin">
+              Profits
+            </h4>
+            <canvas ref={this.chartCanvas}></canvas>
           </div>
         </div>
       </div>
