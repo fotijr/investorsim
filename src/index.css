@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+a.tab{
+  @apply block mr-10 w-3/4 pt-2 pl-2 border-b-2 border-transparent text-gray-600;
+}
+
+a.tab:hover:not(.active){
+  @apply border-gray-100 text-gray-800;
+}
+
 a.active {
-  @apply font-bold border-b-2;
+  @apply font-bold border-gray-200 text-black;
 }
 
 span.label {
