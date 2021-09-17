@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { FaGithub } from 'react-icons/fa';
 
 function Header() {
@@ -17,7 +17,16 @@ function Header() {
             Code
           </a>
         </li>
-        <li>What is this?</li>
+        <li>
+          <a
+            className="flex items-center"
+            href="https://fotijr.com/blog/2021/investorsim/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            What is this?
+          </a>
+        </li>
       </ul>
     </header>
   );
