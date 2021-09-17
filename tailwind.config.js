@@ -1,9 +1,6 @@
 module.exports = {
   mode: 'jit',
-  purge: {
-    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-    safelist: ['float-right']
-  },
+  purge: ['./src/**/*.{js,jsx,ts,tsx}', './index.html'],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {

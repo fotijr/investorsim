@@ -82,7 +82,7 @@ class Stats extends React.Component<StatsProps, StatsState> {
         scales: {
           x: {
             beginAtZero: false,
-            min: 0,
+            min: 1,
             max: 1,
             position: {
               y: 0,
@@ -151,7 +151,7 @@ class Stats extends React.Component<StatsProps, StatsState> {
 
   render() {
     return (
-      <div className="flex flex-col md:flex-row items-center mx-4 mt-4 md:mt-8 mb-10">
+      <div className="flex flex-col md:flex-row items-center mx-4 mt-4 md:mt-10 mb-10">
         <div className="group mr-4 md:mx-14 lg:md-20">
           <div className="rounded-full w-40 h-40 overflow-hidden">
             <img

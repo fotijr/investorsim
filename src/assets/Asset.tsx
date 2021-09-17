@@ -41,8 +41,16 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
       >
         <h4 className="text-xl font-thin uppercase tracking-widest text-gray-800 mb-3">
           {this.props.asset.name}
-          <span className={`float-right${ this.props.asset.shares > 0 ? '' : ' hidden' }`}>
-            {(((this.props.asset.totalValue / this.props.asset.buyInCost) - 1) * 100).toFixed(2) }%
+          <span
+            className={`float-right ${
+              this.props.asset.shares > 0
+                ? this.props.asset.growth! >= 0
+                  ? 'text-green-500'
+                  : 'text-red-500'
+                : 'hidden'
+            }`}
+          >
+            {this.props.asset.growth}%
           </span>
         </h4>
 
@@ -69,6 +77,8 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
             <span className="label">total value</span>
           </div>
         </div>
+
+        <p className="mt-4">{this.props.asset.description}</p>
 
         <div className="my-5 text-gray-500 font-thin text-sm">
           {pluralize('share', this.props.asset.shares, true)} owned
