@@ -78,6 +78,8 @@ class AssetCard extends React.Component<AssetProps, AssetState> {
           </div>
         </div>
 
+        <p className="mt-4">{this.props.asset.description}</p>
+
         <div className="my-5 text-gray-500 font-thin text-sm">
           {pluralize('share', this.props.asset.shares, true)} owned
         </div>

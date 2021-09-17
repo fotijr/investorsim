@@ -1,6 +1,9 @@
 export interface Asset {
   name: string;
 
+  /** Description of asset. */
+  description: string;
+
   /** Price per share. */
   sharePrice: number;
 

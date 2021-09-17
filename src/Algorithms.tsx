@@ -7,7 +7,7 @@ import React from 'react';
 function Algorithms() {
   return (
     <div>
-      <p>Algorithms are still being developed by the economists.</p>
+      <p>Algorithms are still being developed by the analysts.</p>
     </div>
   );
 }

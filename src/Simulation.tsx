@@ -40,6 +40,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
       assets: [
         {
           name: 'Dividend',
+          description: 'Minimal growth, but reliable dividends.',
           sharePrice: 71,
           growthRange: [-0.05, 0.062],
           shares: 0,
@@ -54,6 +55,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
         },
         {
           name: 'Safe',
+          description: 'Slow and steady gains.',
           sharePrice: 50,
           growthRange: [-0.2, 0.25],
           shares: 0,
@@ -63,6 +65,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
         },
         {
           name: 'Risky',
+          description: 'Steeper climbs, steeper falls.',
           sharePrice: 125,
           growthRange: [-1, 1.0103],
           shares: 0,
@@ -72,6 +75,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
         },
         {
           name: 'YOLO',
+          description: 'You only invest once ¯\\_(ツ)_/¯',
           sharePrice: 88,
           growthRange: [-3, 3.0003],
           shares: 0,
