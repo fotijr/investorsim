@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import Stats from './Stats';
 import Areas from './Areas';
-import Assets from './assets/Assets';
+import { Assets } from './assets/Assets';
 import Loans from './Loans';
 import Algorithms from './Algorithms';
 import Profile from './Profile';
@@ -41,7 +41,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
         {
           name: 'Dividend',
           sharePrice: 71,
-          growthRange: [-0.05, 0.064],
+          growthRange: [-0.05, 0.062],
           shares: 0,
           buyInCost: 0,
           totalValue: 0,
@@ -131,14 +131,18 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
       return;
     }
 
+    asset.buyInCost += qty * asset.sharePrice;
+    asset.totalValue = asset.buyInCost;
+    asset.shares = asset.shares + qty;
+    asset.activelyTrading = true;
+    if (!asset.growth) {
+      asset.growth = 0;
+    }
+
     this.setState((state, props) => {
       const assets = state.assets.map((a) => {
         if (a.name === asset.name) {
           // replace existing asset with updated share count
-          asset.buyInCost += qty * asset.sharePrice;
-          asset.totalValue = asset.buyInCost;
-          asset.shares = asset.shares + qty;
-          asset.activelyTrading = true;
           if (a.shares === 0 && qty > 0 && asset.dividend) {
             // first time buying shares of a stock with dividend
             asset.dividend.lastDistributed = state.day;
@@ -147,6 +151,7 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
         }
         return a;
       });
+
       return {
         assets,
         cash: state.cash - asset.sharePrice * qty,
@@ -165,15 +170,14 @@ class Simulation extends React.Component<RouteComponentProps, SimState> {
           // stock isn't yet trading, don't adjust price
           return a;
         }
-        // console.log('starting price', a.price);
         isTradingDay = true;
         const rate = this.getRandomNumber(a.growthRange[0], a.growthRange[1]);
         const multiplier = rate / 100 + 1;
-        // console.log(a.growthRange[0], a.growthRange[1], rate, multiplier);
-        // console.log('rate', rate);
         a.sharePrice *= multiplier;
         const holdingsValue = a.sharePrice * a.shares;
         a.totalValue = holdingsValue;
+        a.growth =
+          Math.round(100 * ((a.totalValue / a.buyInCost - 1) * 100)) / 100;
         netWorth += holdingsValue;
 
         if (a.dividend) {
