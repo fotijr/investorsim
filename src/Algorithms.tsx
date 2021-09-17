@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * Component listing Algorithms.
  * @returns 
